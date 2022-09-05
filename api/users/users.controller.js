@@ -1,68 +1,68 @@
-var cuid = require('cuid');
+// Este fichero se encarga de la logica.
 
-const UserModel = require('./user.model')
+//const mongoose = require("mongoose");
+const UserModel = require("./user.model");
 
-
-// Obtener todos los usuarios
 function getAll(req, res) {
-    UserModel.find({})
-        .then(users => {
-            res.send(users)
-        })
-        .catch(users => {
-            res.send(users)
-        })
+  UserModel.find({}) //find all users, puedes poner parametro o no.
+    .then((users) => {
+      console.log(users);
+      return res.send(users);
+    })
+    .catch((error) => {
+      res.send(error);
+    });
 }
 
-// Obtener un usuario por su ID
+// Get user by ID
+
 function getOneById(req, res) {
-    // UserModel.findOne({ id : req.params.id })
-    //     .then(user => {
-    //         return res.send(user)
-    //     })
-    //     .catch(err => {
-    //         return res.status(500).send(err)
-    //     })
-    UserModel.findById(req.params.id)
-        .then(user => {
-            return res.send(user)
-        })
-        .catch(err => {
-            return res.status(404).send("No se ha encontrado dicho usuario")
-        })
-
+  UserModel.findById(req.params.id) //mirar en el index.js como esta definido
+    .then((user) => {
+      return res.send(user);
+    })
+    .catch((err) => {
+      return res.status(404).send(err);
+    });
 }
 
-// Metiendo un usuario nuevo
+// Creating new user
+
 function create(req, res) {
-    UserModel.create(req.body)
-        .then(userCreated => {
-            return res.send(userCreated)
-        })
-        .catch(err => {
-            return res.status(500).send(err)
-
-        })
+  UserModel.create(req.body) //cojo UserModel y le doy el body q quiero que cree
+    .then((userCreated) => {
+      return res.send(userCreated);
+    })
+    .catch((err) => {
+      return res.status(500).send(err);
+    });
 }
+
+// Deleting a user
 
 function removeOneById(req, res) {
-    UserModel.findByIdAndRemove(req.params.id)
-        .then(deleted => {
-            res.send(deleted)
-        })
-        .catch(err => {
-            res.status(500).send(err)
-        })
+  UserModel.findByIdAndRemove(req.params.id)
+    .then((deleted) => {
+      res.send(deleted);
+    })
+    .catch((err) => {
+      res.status(500).send(err);
+    });
 }
+
+//Updating a user
 
 function updateOneById(req, res) {
-    UserModel.findByIdAndUpdate(req.params.id, req.body, { new : true , runValidators : true } )
-        .then(updated => {
-            res.send(updated)
-        })
-        .catch(err => {
-            res.status(500).send(err)
-        })
+  UserModel.findByIdAndUpdate(req.params.id, req.body, {
+    new: true, // by default it anwer with the previes one, but you can specify that you want an answer with the new one.
+    runValidators: true, // validate each line, and do not do whatever the user wants
+  })
+    .then((updated) => {
+      res.send(updated);
+    })
+    .catch((err) => {
+      res.status(500).send(err);
+    });
 }
 
-module.exports = { getAll, getOneById, create, removeOneById, updateOneById }
+module.exports = { getAll, getOneById, create, removeOneById, updateOneById }; // export all functions
