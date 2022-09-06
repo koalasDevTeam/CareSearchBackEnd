@@ -22,9 +22,12 @@ db.once("open", function () {
   console.log("Connected successfully");
 });
 
-app.use(express.json());
-
+app.use(express.json()); // it must be here always, on top of all funsctions to be able to read json, otherwise you will not be able to see the post
+//users
 const usersRouter = require("./api/users/users.router");
 app.use("/api/users", usersRouter);
+//messages
+const messagesRouter = require("./api/messages/messages.router");
+app.use("/api/messages", messagesRouter);
 
 app.listen(3000);
