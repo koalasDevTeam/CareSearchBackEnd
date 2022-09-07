@@ -3,17 +3,35 @@ var mongoose = require("mongoose");
 
 const UserSchema = mongoose.Schema({
   user_Status: Boolean,
-  city: String,
+  city: {
+    type: String,
+  },
   datebirth: String,
   direction: String,
-  dni: String,
-  email: String,
-  full_info: String,
+  dni: {
+    type: String,
+  },
+  email: {
+    type: String,
+    required: true,
+    unique: true,
+  },
+  full_info: {
+    type: String,
+    maxLength: 4000,
+  },
   id: String,
   img: String,
   job: String,
-  name: String,
-  pass: String,
+  name: {
+    type: String,
+    maxLength: 20,
+  },
+  pass: {
+    type: String,
+    maxLength: 18,
+    minLength: 6,
+  },
   price: String,
   schedule: String,
   score: Number,
