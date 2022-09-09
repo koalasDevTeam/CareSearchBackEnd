@@ -10,6 +10,8 @@ const UserSchema = mongoose.Schema({
   direction: String,
   dni: {
     type: String,
+    maxLength: 10,
+    unique: true,
   },
   email: {
     type: String,
