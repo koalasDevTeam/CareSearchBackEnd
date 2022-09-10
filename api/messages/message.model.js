@@ -4,6 +4,8 @@ var mongoose = require("mongoose");
 const MessageSchema = mongoose.Schema({
   id_message: String,
   user_send:String,
+  name_user_send:String,
+  img_user_send:String,
   user_receive:String,
   date: String,
   content: String,
