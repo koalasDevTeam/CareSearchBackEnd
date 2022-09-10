@@ -3,10 +3,28 @@
 //const mongoose = require("mongoose");
 const UserModel = require("./user.model");
 
+function removeUserPassword(arrayOfUsers) {
+  return arrayOfUsers.map((user) => {
+    user.pass = undefined;
+    return user;
+  });
+}
+
+function removeSensitiveData(arrayOfUsers) {
+  return arrayOfUsers.map((user) => {
+    user.dni = undefined;
+    user.direction = undefined;
+    user.datebirth = undefined;
+    return user;
+  });
+}
+
 function getAll(req, res) {
   return UserModel.find({}) //find all users, puedes poner parametro o no.
     .then((users) => {
-      console.log(users);
+      users = users.filter((user) => user.worker === true); // bringing just  workers
+      users = removeUserPassword(users);
+      users = removeSensitiveData(users);
       return res.send(users);
     })
     .catch((error) => {
@@ -14,15 +32,29 @@ function getAll(req, res) {
     });
 }
 
-// Get user by ID
-
 function getOneById(req, res) {
   return UserModel.findById(req.params.id) //mirar en el index.js como esta definido
     .then((user) => {
+      user = user ? removeUserPassword([user])[0] : user;
+
       return res.send(user);
     })
     .catch((err) => {
       return res.status(404).send(err);
+    });
+}
+//get one
+
+function findOne(req, res) {
+  return UserModel.findOne({ email: req.body.email, pass: req.body.pass }) //cojo UserModel y le doy el body q quiero que cree
+    .then((user) => {
+      user = user ? removeUserPassword([user])[0] : user;
+      if (user) return res.status(200).send(user);
+      else res.status(401).send(user);
+    })
+    .catch((err) => {
+      console.log(err);
+      return res.status(500).send(err);
     });
 }
 
@@ -64,4 +96,11 @@ function removeOneById(req, res) {
     });
 }
 
-module.exports = { getAll, getOneById, create, removeOneById, updateOneById }; // export all functions
+module.exports = {
+  getAll,
+  getOneById,
+  create,
+  removeOneById,
+  updateOneById,
+  findOne,
+}; // export all functions
