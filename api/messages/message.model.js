@@ -3,11 +3,10 @@ var mongoose = require("mongoose");
 
 const MessageSchema = mongoose.Schema({
   id_message: String,
-  name: String,
+  user_send:String,
+  user_receive:String,
   date: String,
-  title: String,
   content: String,
-  message: String,
 });
 
 const MessageModel = mongoose.model("message", MessageSchema);
