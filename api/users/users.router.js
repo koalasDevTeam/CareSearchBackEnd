@@ -6,6 +6,7 @@ const controller = require("./users.controller");
 router.get("/", controller.getAll);
 router.get("/:id", controller.getOneById);
 router.post("/", controller.create);
+router.post("/email", controller.findOne);
 router.put("/:id", controller.updateOneById);
 router.delete("/:id", controller.removeOneById);
 
