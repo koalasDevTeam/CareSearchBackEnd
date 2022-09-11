@@ -16,7 +16,7 @@ const UserSchema = mongoose.Schema({
   },
   email: {
     type: String,
-    required: true,
+
     unique: true,
   },
   full_info: {
@@ -29,7 +29,6 @@ const UserSchema = mongoose.Schema({
   name: {
     type: String,
     maxLength: 20,
-    required: true,
   },
   pass: {
     type: String,

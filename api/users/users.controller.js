@@ -61,11 +61,7 @@ function findOne(req, res) {
 // Creating new user
 
 function create(req, res) {
-  return UserModel.create({
-    name: req.body.name,
-    email: req.body.email,
-    pass: req.body.pass,
-  }) //cojo UserModel y le doy el body q quiero que cree
+  return UserModel.create({}) //cojo UserModel y le doy el body q quiero que cree
     .then((userCreated) => {
       return res.send(userCreated);
     })
