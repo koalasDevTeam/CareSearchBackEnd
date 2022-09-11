@@ -10,6 +10,7 @@ const UserSchema = mongoose.Schema({
   direction: String,
   dni: {
     type: String,
+    /*  required: true, */
     maxLength: 10,
     unique: true,
   },
@@ -28,9 +29,11 @@ const UserSchema = mongoose.Schema({
   name: {
     type: String,
     maxLength: 20,
+    required: true,
   },
   pass: {
     type: String,
+    /*  required: true, */
     maxLength: 18,
     minLength: 6,
   },
