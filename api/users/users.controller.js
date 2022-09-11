@@ -61,11 +61,13 @@ function findOne(req, res) {
 // Creating new user
 
 function create(req, res) {
-  return UserModel.create({}) //cojo UserModel y le doy el body q quiero que cree
+  return UserModel.create(req.body) //cojo UserModel y le doy el body q quiero que cree
     .then((userCreated) => {
+      userCreated = removeUserPassword([userCreated])[0];
       return res.send(userCreated);
     })
     .catch((err) => {
+      console.log(err);
       return res.status(500).send(err);
     });
 }
@@ -73,11 +75,25 @@ function create(req, res) {
 //Updating a user
 
 function updateOneById(req, res) {
+  if (!req.body.dni) {
+    res.status(500).send({ error_message: "DNI is missing" });
+    return;
+  } else if (!req.body.city) {
+    res.status(500).send({ error_message: "City is missing" });
+    return;
+  } else if (!req.body.full_info) {
+    res.status(500).send({ error_message: " full_info: is missing" });
+    return;
+  } else if (!req.body.datebirth) {
+    res.status(500).send({ error_message: " datebirth: is missing" });
+    return;
+  }
   return UserModel.findByIdAndUpdate(req.params.id, req.body, {
     new: true, // by default it anwer with the previes one, but you can specify that you want an answer with the new one.
     runValidators: true, // validate each line, and do not do whatever the user wants
   })
     .then((updated) => {
+      updated = removeUserPassword([updated])[0];
       return res.send(updated);
     })
     .catch((err) => {

@@ -10,9 +10,8 @@ const UserSchema = mongoose.Schema({
   direction: String,
   dni: {
     type: String,
-    /*  required: true, */
+    //required: true,
     maxLength: 10,
-    unique: true,
   },
   email: {
     type: String,
@@ -32,7 +31,7 @@ const UserSchema = mongoose.Schema({
   },
   pass: {
     type: String,
-    /*  required: true, */
+    required: true,
     maxLength: 18,
     minLength: 6,
   },
