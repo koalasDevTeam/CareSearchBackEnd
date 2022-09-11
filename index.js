@@ -30,4 +30,6 @@ app.use("/api/users", usersRouter);
 const messagesRouter = require("./api/messages/messages.router");
 app.use("/api/messages", messagesRouter);
 
-app.listen(443);
+port = process.env.PORT || 3000
+// app.listen(443);
+app.listen(PORT);
