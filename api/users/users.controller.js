@@ -1,6 +1,8 @@
 // Este fichero se encarga de la logica.
 
 //const mongoose = require("mongoose");
+const bcrypt = require("bcrypt");
+//const { has } = require("cheerio/lib/api/traversing");
 const UserModel = require("./user.model");
 
 function removeUserPassword(arrayOfUsers) {
@@ -46,8 +48,28 @@ function getOneById(req, res) {
 //get one
 
 function findOne(req, res) {
-  return UserModel.findOne({ email: req.body.email, pass: req.body.pass }) //cojo UserModel y le doy el body q quiero que cree
-    .then((user) => {
+  return UserModel.findOne({ email: req.body.email }).then(async (user) => {
+    console.log(user);
+    if (!user) {
+      return res
+        .status(400)
+        .json({ message: "Usuario o contrasen~a sincorrectos" });
+    }
+    try {
+      console.log(await bcrypt.compare(req.body.pass, user.pass));
+      if (await bcrypt.compare(req.body.pass, user.pass)) {
+        user = removeUserPassword([user])[0];
+        return res.status(200).send(user);
+      } else {
+        return res.status(401).send();
+      }
+    } catch {
+      return res.status(500).send();
+    }
+    /* return (user.email = req.body.email); */
+  });
+
+  /* .then((user) => {
       user = user ? removeUserPassword([user])[0] : user;
       if (user) return res.status(200).send(user);
       else res.status(401).send(user);
@@ -56,20 +78,52 @@ function findOne(req, res) {
       console.log(err);
       return res.status(500).send(err);
     });
+  console.log(user);
+  if (user == null) {
+    res.status(401).send("Cannot find user");
+  } */
+
+  // }
+
+  // console.log(salt);
+  // console.log(hashedPassword);
+  // //req.body.pass = hashedPassword;
+  // return UserModel.findOne({ email: req.body.email, pass: hashedPassword }) //cojo UserModel y le doy el body q quiero que cree
+  //   .then((user) => {
+  //     user = user ? removeUserPassword([user])[0] : user;
+  //     if (user) return res.status(200).send(user);
+  //     else res.status(401).send(user);
+  //   })
+  //   .catch((err) => {
+  //     console.log(err);
+  //     return res.status(500).send(err);
+  //   });
+  // } catch {
+  //   return res.status(500).send();
+  // }
 }
 
 // Creating new user
 
-function create(req, res) {
-  return UserModel.create(req.body) //cojo UserModel y le doy el body q quiero que cree
-    .then((userCreated) => {
-      userCreated = removeUserPassword([userCreated])[0];
-      return res.send(userCreated);
-    })
-    .catch((err) => {
-      console.log(err);
-      return res.status(500).send(err);
-    });
+async function create(req, res) {
+  try {
+    const salt = await bcrypt.genSalt();
+    const hashedPassword = await bcrypt.hash(req.body.pass, salt);
+    console.log(salt);
+    console.log(hashedPassword);
+    req.body.pass = hashedPassword;
+    return UserModel.create(req.body) //cojo UserModel y le doy el body q quiero que cree
+      .then((userCreated) => {
+        userCreated = removeUserPassword([userCreated])[0];
+        return res.send(userCreated);
+      })
+      .catch((err) => {
+        console.log(err);
+        return res.status(500).send(err);
+      });
+  } catch {
+    res.status(500).send();
+  }
 }
 
 //Updating a user

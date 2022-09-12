@@ -32,7 +32,7 @@ const UserSchema = mongoose.Schema({
   pass: {
     type: String,
     required: true,
-    maxLength: 18,
+
     minLength: 6,
   },
   price: String,
