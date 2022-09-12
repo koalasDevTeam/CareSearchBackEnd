@@ -4,6 +4,7 @@
 const MessageModel = require("./message.model");
 
 function getAll(req, res) {
+  console.log(req.query.abi);
   return MessageModel.find({}) //find all users, puedes poner parametro o no.
     .then((messages) => {
       console.log(messages);
