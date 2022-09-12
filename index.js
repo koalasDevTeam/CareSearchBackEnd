@@ -13,7 +13,7 @@ mongoose.connect(
 );
 
 //to connect through localhost 27017
-// mongoose.connect(`mongodb://localhost/Koala-project`);
+//mongoose.connect(`mongodb://localhost/Koala-project`);
 
 // to detect errors
 const db = mongoose.connection;
