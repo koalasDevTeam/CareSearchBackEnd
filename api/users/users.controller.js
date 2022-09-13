@@ -2,8 +2,25 @@
 
 //const mongoose = require("mongoose");
 const bcrypt = require("bcrypt");
+const jwt = require("jsonwebtoken");
+
 //const { has } = require("cheerio/lib/api/traversing");
 const UserModel = require("./user.model");
+
+function logged(req, res, next) {
+  const authHeader = req.headers["authorization"];
+  const token = authHeader && authHeader.split(" ")[1];
+  if (token == null) return res.sendStatus(401);
+
+  jwt.verify(token, process.env.ACCESS_TOKEN_SECRET, (err, dataStored) => {
+    //dataStore lo que va dentro del payload que es el user
+    //console.log(err);
+    if (err) return res.sendStatus(403);
+    req.user = dataStored; // we leave it here teporarily for the next function
+
+    next();
+  });
+}
 
 function removeUserPassword(arrayOfUsers) {
   return arrayOfUsers.map((user) => {
@@ -22,6 +39,7 @@ function removeSensitiveData(arrayOfUsers) {
 }
 
 function getAll(req, res) {
+  console.log(req.user);
   return UserModel.find({}) //find all users, puedes poner parametro o no.
     .then((users) => {
       users = users.filter((user) => user.worker === true); // bringing just  workers
@@ -49,58 +67,48 @@ function getOneById(req, res) {
 
 function findOne(req, res) {
   return UserModel.findOne({ email: req.body.email }).then(async (user) => {
-    console.log(user);
+    //console.log(user);
     if (!user) {
       return res
         .status(400)
-        .json({ message: "Usuario o contrasen~a sincorrectos" });
+        .json({ message: "Usuario o contrasen~a sincorrectos" }); // wrong email
     }
     try {
-      console.log(await bcrypt.compare(req.body.pass, user.pass));
+      //console.log(await bcrypt.compare(req.body.pass, user.pass));
       if (await bcrypt.compare(req.body.pass, user.pass)) {
         user = removeUserPassword([user])[0];
-        return res.status(200).send(user);
+        if (!process.env.ACCESS_TOKEN_SECRET) {
+          console.log("ACCESS_TOKEN_SECRET is missing");
+          return res
+            .status(500)
+            .send({ message: "ACCESS_TOKEN_SECRET is missing" });
+        } else {
+          //console.log(user);
+          //console.log(user._id.toString());
+          user = JSON.stringify(user); // no me deja modificar _id, por eso hago lo siguiente
+          user = JSON.parse(user);
+          user._id = user._id.toString();
+
+          console.log(user);
+          let token = jwt.sign({ user: user }, process.env.ACCESS_TOKEN_SECRET); //to create a new token
+
+          //console.log(token);
+          //console.log(process.env.ACCESS_TOKEN_SECRET);
+          return res.status(200).send(token);
+        }
       } else {
-        return res.status(401).send();
+        console.log("wrong password");
+        return res
+          .status(401)
+          .send({ message: "Usuario o contrasen~a son incorrectos" }); //wrong password
       }
-    } catch {
-      return res.status(500).send();
-    }
-    /* return (user.email = req.body.email); */
-  });
-
-  /* .then((user) => {
-      user = user ? removeUserPassword([user])[0] : user;
-      if (user) return res.status(200).send(user);
-      else res.status(401).send(user);
-    })
-    .catch((err) => {
+    } catch (err) {
       console.log(err);
-      return res.status(500).send(err);
-    });
-  console.log(user);
-  if (user == null) {
-    res.status(401).send("Cannot find user");
-  } */
-
-  // }
-
-  // console.log(salt);
-  // console.log(hashedPassword);
-  // //req.body.pass = hashedPassword;
-  // return UserModel.findOne({ email: req.body.email, pass: hashedPassword }) //cojo UserModel y le doy el body q quiero que cree
-  //   .then((user) => {
-  //     user = user ? removeUserPassword([user])[0] : user;
-  //     if (user) return res.status(200).send(user);
-  //     else res.status(401).send(user);
-  //   })
-  //   .catch((err) => {
-  //     console.log(err);
-  //     return res.status(500).send(err);
-  //   });
-  // } catch {
-  //   return res.status(500).send();
-  // }
+      return res
+        .status(500)
+        .send({ message: "Usuario o contrasen~a son incorrectos" });
+    }
+  });
 }
 
 // Creating new user
@@ -156,7 +164,7 @@ function updateOneById(req, res) {
 }
 // Deleting a user
 
-function removeOneById(req, res) {
+/* function removeOneById(req, res) {
   return UserModel.findByIdAndRemove(req.params.id)
     .then((deleted) => {
       return res.send(deleted);
@@ -164,13 +172,14 @@ function removeOneById(req, res) {
     .catch((err) => {
       return res.status(500).send(err);
     });
-}
+} */
 
 module.exports = {
   getAll,
   getOneById,
   create,
-  removeOneById,
+  /*  removeOneById, */
   updateOneById,
   findOne,
+  logged,
 }; // export all functions
