@@ -5,7 +5,7 @@ const MessageModel = require("./message.model");
 
 function getAll(req, res) {
   const userId = req.query.userId;
-  console.log(req.query.userId);
+
   //console.log(req.user._id);// Lo ideal es q el mildware anterior haya guardado en req.user el user actual logeado
 
   return MessageModel.find({

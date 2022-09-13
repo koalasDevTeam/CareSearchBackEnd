@@ -4,23 +4,7 @@
 const bcrypt = require("bcrypt");
 const jwt = require("jsonwebtoken");
 
-//const { has } = require("cheerio/lib/api/traversing");
 const UserModel = require("./user.model");
-
-function logged(req, res, next) {
-  const authHeader = req.headers["authorization"];
-  const token = authHeader && authHeader.split(" ")[1];
-  if (token == null) return res.sendStatus(401);
-
-  jwt.verify(token, process.env.ACCESS_TOKEN_SECRET, (err, dataStored) => {
-    //dataStore lo que va dentro del payload que es el user
-    //console.log(err);
-    if (err) return res.sendStatus(403);
-    req.user = dataStored; // we leave it here teporarily for the next function
-
-    next();
-  });
-}
 
 function removeUserPassword(arrayOfUsers) {
   return arrayOfUsers.map((user) => {
@@ -65,16 +49,14 @@ function getOneById(req, res) {
 }
 //get one
 
-function findOne(req, res) {
+function islogin(req, res) {
   return UserModel.findOne({ email: req.body.email }).then(async (user) => {
-    //console.log(user);
     if (!user) {
       return res
         .status(400)
         .json({ message: "Usuario o contrasen~a sincorrectos" }); // wrong email
     }
     try {
-      //console.log(await bcrypt.compare(req.body.pass, user.pass));
       if (await bcrypt.compare(req.body.pass, user.pass)) {
         user = removeUserPassword([user])[0];
         if (!process.env.ACCESS_TOKEN_SECRET) {
@@ -83,17 +65,13 @@ function findOne(req, res) {
             .status(500)
             .send({ message: "ACCESS_TOKEN_SECRET is missing" });
         } else {
-          //console.log(user);
-          //console.log(user._id.toString());
           user = JSON.stringify(user); // no me deja modificar _id, por eso hago lo siguiente
           user = JSON.parse(user);
           user._id = user._id.toString();
 
           console.log(user);
-          let token = jwt.sign({ user: user }, process.env.ACCESS_TOKEN_SECRET); //to create a new token
+          let token = jwt.sign(user, process.env.ACCESS_TOKEN_SECRET); //to create a new token
 
-          //console.log(token);
-          //console.log(process.env.ACCESS_TOKEN_SECRET);
           return res.status(200).send(token);
         }
       } else {
@@ -113,7 +91,7 @@ function findOne(req, res) {
 
 // Creating new user
 
-async function create(req, res) {
+async function register(req, res) {
   try {
     const salt = await bcrypt.genSalt();
     const hashedPassword = await bcrypt.hash(req.body.pass, salt);
@@ -150,7 +128,25 @@ function updateOneById(req, res) {
     res.status(500).send({ error_message: " datebirth: is missing" });
     return;
   }
-  return UserModel.findByIdAndUpdate(req.params.id, req.body, {
+
+  return UserModel.findByIdAndUpdate(req.user._id, req.body, {
+    runValidators: true, // validate each line, and do not do whatever the user wants
+  })
+    .then((updated) => {
+      updated = removeUserPassword([updated])[0];
+
+      return res.send(updated);
+    })
+    .catch((err) => {
+      console.log(err);
+      res.status(500).send(err);
+    });
+}
+// Deleting a user
+
+function removeOneById(req, res) {
+  req.body.user_Status = true;
+  return UserModel.findByIdAndUpdate(req.user._id, req.body, {
     new: true, // by default it anwer with the previes one, but you can specify that you want an answer with the new one.
     runValidators: true, // validate each line, and do not do whatever the user wants
   })
@@ -162,24 +158,12 @@ function updateOneById(req, res) {
       res.status(500).send(err);
     });
 }
-// Deleting a user
-
-/* function removeOneById(req, res) {
-  return UserModel.findByIdAndRemove(req.params.id)
-    .then((deleted) => {
-      return res.send(deleted);
-    })
-    .catch((err) => {
-      return res.status(500).send(err);
-    });
-} */
 
 module.exports = {
   getAll,
   getOneById,
-  create,
-  /*  removeOneById, */
+  register,
+  removeOneById,
   updateOneById,
-  findOne,
-  logged,
+  islogin,
 }; // export all functions
