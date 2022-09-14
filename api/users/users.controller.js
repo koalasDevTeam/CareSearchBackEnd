@@ -104,21 +104,22 @@ async function register(req, res) {
 //Updating a user
 
 function updateOneById(req, res) {
-  if (!req.body.dni) {
+  /* if (!req.body.dni) {
     res.status(500).send({ error_message: "DNI is missing" });
     return;
   } else if (!req.body.city) {
     res.status(500).send({ error_message: "City is missing" });
-    return;
-  } else if (!req.body.full_info) {
+    return; */
+  /* else if (!req.body.full_info) {
     res.status(500).send({ error_message: " full_info: is missing" });
-    return;
-  } else if (!req.body.datebirth) {
+    return; */
+  /*   } else if (!req.body.datebirth) {
     res.status(500).send({ error_message: " datebirth: is missing" });
     return;
-  }
+  } */
   console.log(req.user._id);
   return UserModel.findByIdAndUpdate(req.user._id, req.body, {
+    new: true,
     runValidators: true, // validate each line, and do not do whatever the user wants
   })
     .then((updated) => {
