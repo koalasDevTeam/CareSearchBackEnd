@@ -7,14 +7,14 @@ function getAll(req, res) {
   const user1 = req.query.user1;
   const user2 = req.query.user2;
 
-
   //console.log(req.user._id);// Lo ideal es q el mildware anterior haya guardado en req.user el user actual logeado
 
   return ConversationModel.find({
     $or: [{ user_1: user1 }, { user_2: user2 }],
   }) //find all users, puedes poner parametro o no.
+
     .then((messages) => {
-      //console.log(messages);
+      console.log(messages);
       return res.send(messages);
     })
     .catch((error) => {
@@ -38,10 +38,9 @@ function getOneById(req, res) {
 
 function create(req, res) {
   return ConversationModel.create(req.body) //cojo UserModel y le doy el body q quiero que cree
-  .then((userCreated) => {
-    console.log(req.body.messages[0])
+    .then((userCreated) => {
+      console.log(req.body);
       return res.send(userCreated);
-
     })
     .catch((err) => {
       return res.status(500).send(err);
@@ -59,6 +58,5 @@ function removeOneById(req, res) {
       return res.status(500).send(err);
     });
 }
-
 
 module.exports = { getAll, getOneById, create, removeOneById }; // export all functions
