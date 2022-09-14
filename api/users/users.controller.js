@@ -1,6 +1,5 @@
 // Este fichero se encarga de la logica.
 
-//const mongoose = require("mongoose");
 const bcrypt = require("bcrypt");
 const jwt = require("jsonwebtoken");
 
@@ -37,7 +36,7 @@ function getAll(req, res) {
 }
 
 function getOneById(req, res) {
-  return UserModel.findById(req.params.id) //mirar en el index.js como esta definido
+  return UserModel.findById(req.params.id) //take a look at index.js to understand how is define
     .then((user) => {
       user = user ? removeUserPassword([user])[0] : user;
 
@@ -47,7 +46,6 @@ function getOneById(req, res) {
       return res.status(404).send(err);
     });
 }
-//get one
 
 function islogin(req, res) {
   return UserModel.findOne({ email: req.body.email }).then(async (user) => {
@@ -59,31 +57,22 @@ function islogin(req, res) {
     try {
       if (await bcrypt.compare(req.body.pass, user.pass)) {
         user = removeUserPassword([user])[0];
-        if (!process.env.ACCESS_TOKEN_SECRET) {
-          console.log("ACCESS_TOKEN_SECRET is missing");
-          return res
-            .status(500)
-            .send({ message: "ACCESS_TOKEN_SECRET is missing" });
-        } else {
-          user = JSON.stringify(user); // no me deja modificar _id, por eso hago lo siguiente
-          user = JSON.parse(user);
-          user._id = user._id.toString();
 
-          console.log(user);
-          let token = jwt.sign(user, process.env.ACCESS_TOKEN_SECRET); //to create a new token
+        user = JSON.stringify(user); // it doens't let you to modify the _id, that's why i do what is next
+        user = JSON.parse(user);
+        user._id = user._id.toString();
 
-          return res.status(200).send(token);
-        }
+        let token = jwt.sign(user, process.env.ACCESS_TOKEN_SECRET); //to create a new token
+
+        return res.status(200).send(token);
       } else {
-        console.log("wrong password");
         return res
           .status(401)
           .send({ message: "Usuario o contrasen~a son incorrectos" }); //wrong password
       }
     } catch (err) {
-      console.log(err);
       return res
-        .status(500)
+        .status(401)
         .send({ message: "Usuario o contrasen~a son incorrectos" });
     }
   });
@@ -98,7 +87,7 @@ async function register(req, res) {
     console.log(salt);
     console.log(hashedPassword);
     req.body.pass = hashedPassword;
-    return UserModel.create(req.body) //cojo UserModel y le doy el body q quiero que cree
+    return UserModel.create(req.body) //you give UserModel the body you want
       .then((userCreated) => {
         userCreated = removeUserPassword([userCreated])[0];
         return res.send(userCreated);
@@ -128,7 +117,7 @@ function updateOneById(req, res) {
     res.status(500).send({ error_message: " datebirth: is missing" });
     return;
   }
-
+  console.log(req.user._id);
   return UserModel.findByIdAndUpdate(req.user._id, req.body, {
     runValidators: true, // validate each line, and do not do whatever the user wants
   })
@@ -138,10 +127,10 @@ function updateOneById(req, res) {
       return res.send(updated);
     })
     .catch((err) => {
-      console.log(err);
       res.status(500).send(err);
     });
 }
+
 // Deleting a user
 
 function removeOneById(req, res) {

@@ -10,12 +10,10 @@ const UserSchema = mongoose.Schema({
   direction: String,
   dni: {
     type: String,
-    //required: true,
     maxLength: 10,
   },
   email: {
     type: String,
-
     unique: true,
   },
   full_info: {
@@ -32,7 +30,6 @@ const UserSchema = mongoose.Schema({
   pass: {
     type: String,
     required: true,
-
     minLength: 6,
   },
   price: String,

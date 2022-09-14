@@ -4,10 +4,10 @@ const router = require("express").Router();
 const controller = require("./messages.controller");
 const islogged = require("../../middlewares/islogged");
 
-router.get("/", islogged, controller.getAll);
-router.get("/:id", islogged, controller.getOneById);
+router.get("/", controller.getAll);
+router.get("/:id", controller.getOneById);
 router.post("/", controller.create);
-router.put("/:id", islogged, controller.updateOneById);
-router.delete("/:id", islogged, controller.removeOneById);
+router.put("/:id", controller.updateOneById);
+router.delete("/:id", controller.removeOneById);
 
 module.exports = router;
