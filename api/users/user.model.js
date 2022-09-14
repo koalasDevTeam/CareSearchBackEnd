@@ -10,7 +10,7 @@ const UserSchema = mongoose.Schema({
   direction: String,
   dni: {
     type: String,
-    maxLength: 10,
+    /* maxLength: 10, */
   },
   email: {
     type: String,

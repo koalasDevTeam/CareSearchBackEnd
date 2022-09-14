@@ -13,12 +13,12 @@ if (!process.env.ACCESS_TOKEN_SECRET) {
 
 //to connect thought mongodb Atlas
 
-/* mongoose.connect(
+mongoose.connect(
   `mongodb+srv://dbUser:${MONGO_DB_PASSWORD}@cluster0.zjngkqi.mongodb.net/Koala-project?retryWrites=true&w=majority`
-); */
+);
 
 //to connect through localhost 27017
-mongoose.connect(`mongodb://localhost/Koala-project`);
+//mongoose.connect(`mongodb://localhost/Koala-project`);
 
 // to detect errors
 const db = mongoose.connection;
