@@ -2,11 +2,13 @@
 
 const router = require("express").Router();
 const controller = require("./conversations.controller");
-const islogged = require("../../middlewares/islogged");
+
 
 router.get("/", controller.getAll);
+router.put("/:id", controller.updateOneById);
 router.get("/:id", controller.getOneById);
 router.post("/", controller.create);
 router.delete("/:id", controller.removeOneById);
+
 
 module.exports = router;

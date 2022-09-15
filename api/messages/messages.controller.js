@@ -12,7 +12,7 @@ function getAll(req, res) {
     $or: [{ user_receive: userId }, { user_send: userId }],
   }) //find all users, puedes poner parametro o no.
     .then((messages) => {
-      //console.log(messages);
+      console.log(messages);
       return res.send(messages);
     })
     .catch((error) => {
