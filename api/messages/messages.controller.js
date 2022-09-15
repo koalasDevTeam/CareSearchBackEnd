@@ -4,9 +4,15 @@
 const MessageModel = require("./message.model");
 
 function getAll(req, res) {
-  return MessageModel.find({}) //find all users, puedes poner parametro o no.
+  const userId = req.query.userId;
+
+  //console.log(req.user._id);// Lo ideal es q el mildware anterior haya guardado en req.user el user actual logeado
+
+  return MessageModel.find({
+    $or: [{ user_receive: userId }, { user_send: userId }],
+  }) //find all users, puedes poner parametro o no.
     .then((messages) => {
-      console.log(messages);
+      //console.log(messages);
       return res.send(messages);
     })
     .catch((error) => {

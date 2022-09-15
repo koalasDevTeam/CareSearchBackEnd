@@ -2,6 +2,7 @@
 
 const router = require("express").Router();
 const controller = require("./messages.controller");
+const islogged = require("../../middlewares/islogged");
 
 router.get("/", controller.getAll);
 router.get("/:id", controller.getOneById);
