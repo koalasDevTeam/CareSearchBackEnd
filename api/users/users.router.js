@@ -8,6 +8,7 @@ router.get("/:id", islogged, controller.getOneById);
 router.post("/", controller.register);
 router.post("/login", controller.islogin);
 router.put("/:id", islogged, controller.updateOneById);
+//router.put("/:id", islogged, controller.updateUrlImageById);
 router.delete("/:id", islogged, controller.removeOneById);
 
 module.exports = router;
