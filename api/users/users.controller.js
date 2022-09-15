@@ -90,7 +90,7 @@ async function register(req, res) {
         return res.send(userCreated);
       })
       .catch((err) => {
-        console.log(err);
+        //console.log(err);
         return res.status(500).send(err);
       });
   } catch {

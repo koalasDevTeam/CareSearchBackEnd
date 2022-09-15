@@ -6,7 +6,7 @@ app.use(cors({ origin: "*" })); //"http://localhost:4200" * ignifica que todos t
 /*  */
 const MONGO_DB_PASSWORD = process.env.MONGO_DB_PASSWORD;
 if (!process.env.ACCESS_TOKEN_SECRET) {
-  console.log("ACCESS_TOKEN_SECRET is missing");
+  //console.log("ACCESS_TOKEN_SECRET is missing");
   /* res.status(500).send({ message: "ACCESS_TOKEN_SECRET is missing" }); */
   process.exit(1);
 }
@@ -24,7 +24,7 @@ mongoose.connect(`mongodb://localhost/Koala-project`);
 const db = mongoose.connection;
 db.on("error", console.error.bind(console, "connection error: "));
 db.once("open", function () {
-  console.log("Connected successfully");
+  //console.log("Connected successfully");
 });
 
 app.use(express.json()); // it must be here always, on top of all funsctions to be able to read json, otherwise you will not be able to see the post
