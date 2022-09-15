@@ -26,24 +26,6 @@ db.on("error", console.error.bind(console, "connection error: "));
 db.once("open", function() {
     console.log("Connected successfully");
 });
-/*
-const multer = require('multer');
-
-const storage = multer.diskStorage({
-    destination: function(req, file, cb) {
-        cb(null, './uploadsImages')
-    },
-    filename: function(req, file, cb) {
-        const ext = file.originalname.split('.').pop()
-        cb(null, `uimg-${Date.now()}.${ext}`)
-    }
-})
-
-const uploads = multer({ storage: storage });
-
-app.post("/uploads", uploads.single('dataForm'), (req, res) => {
-    res.send({ data: 'Imagen cargada' })
-});*/
 
 
 app.use(express.json()); // it must be here always, on top of all funsctions to be able to read json, otherwise you will not be able to see the post
