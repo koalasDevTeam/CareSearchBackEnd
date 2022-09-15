@@ -14,7 +14,6 @@ function getAll(req, res) {
   }) //find all users, puedes poner parametro o no.
 
     .then((messages) => {
-      console.log(messages);
       return res.send(messages);
     })
     .catch((error) => {
@@ -38,8 +37,8 @@ function getOneById(req, res) {
 
 function create(req, res) {
   return ConversationModel.create(req.body) //cojo UserModel y le doy el body q quiero que cree
+
     .then((userCreated) => {
-      console.log(req.body);
       return res.send(userCreated);
     })
     .catch((err) => {
