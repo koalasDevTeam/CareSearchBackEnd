@@ -41,7 +41,7 @@ const storage = multer.diskStorage({
 
 const uploads = multer({ storage: storage });
 
-app.post("/uploads", upload.single('dataForm'), (req, res) => {
+app.post("/uploads", uploads.single('dataForm'), (req, res) => {
     res.send({ data: 'Imagen cargada' })
 });
 
