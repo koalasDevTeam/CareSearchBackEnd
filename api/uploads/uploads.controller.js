@@ -13,7 +13,7 @@ const storage = multer.diskStorage({
 const uploads = multer({ storage: storage });
 
 
-//module.exports.uploads = uploads.single('dataForm');
+exports.uploads = uploads.single('dataForm');
 
 /*exports.uploadFile = (req, res) => {
     res.send({ data: 'Enviar un archivo' });

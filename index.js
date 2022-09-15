@@ -26,7 +26,7 @@ db.on("error", console.error.bind(console, "connection error: "));
 db.once("open", function() {
     console.log("Connected successfully");
 });
-
+/*
 const multer = require('multer');
 
 const storage = multer.diskStorage({
@@ -43,7 +43,7 @@ const uploads = multer({ storage: storage });
 
 app.post("/uploads", uploads.single('dataForm'), (req, res) => {
     res.send({ data: 'Imagen cargada' })
-});
+});*/
 
 
 app.use(express.json()); // it must be here always, on top of all funsctions to be able to read json, otherwise you will not be able to see the post
@@ -54,6 +54,7 @@ app.use("/api/users", usersRouter);
 const messagesRouter = require("./api/messages/messages.router");
 app.use("/api/messages", messagesRouter);
 
-//const uploadsRouter = require("./api/uploads/uploads.router");
-//app.use("/api/uploads", uploadsRouter);
+const uploadsRouter = require("./api/uploads/uploads.router");
+app.use("/api/uploads", uploadsRouter);
+
 app.listen(3000);
